@@ -20,12 +20,16 @@ class Auth:
         self.router.add_api_route('/me', self.__me, methods=['GET'])
     
     async def __generate_before_auth_otp(self, email: str = Form(...)):
-        user = Rules.get({'email': email}, self.client, 'AUTH', 'USERS')
-        if user:
-            return {'status_code': 404, 'data': {}, 'message': 'User already exists, try logging in'}
-        else:
-            self.__otp = AuthUtils.send_otp(email)
-            return {'status_code': 200, 'message': 'Otp sent to your Email Id'}
+        try:
+            user = Rules.get({'email': email}, self.client, 'AUTH', 'USERS')
+            if user:
+                return {'status_code': 404, 'data': {}, 'message': 'User already exists, try logging in'}
+            else:
+                self.__otp = AuthUtils.send_otp(email)
+                return {'status_code': 200, 'message': 'Otp sent to your Email Id'}
+        except Exception as e:
+            return {'status_code': 404, 'data': {}, 'message': str(e)}
+    
     
     async def __signup(self, first_name: str = Form(...), last_name: str = Form(...), email: str = Form(...), password: str = Form(...), use_type: str = Form(...), otp: str = Form(...)):
         if otp == self.__otp:
