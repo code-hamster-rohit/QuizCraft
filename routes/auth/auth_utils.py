@@ -19,6 +19,7 @@ class AuthUtils(BaseModel):
     @staticmethod
     def convert_object_ids(data):
         data['_id'] = str(data['_id'])
+        return data
     
     @staticmethod
     def send_otp(email: str) -> str:

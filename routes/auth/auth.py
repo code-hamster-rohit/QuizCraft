@@ -54,7 +54,7 @@ class Auth:
     async def __login(self, email: str = Form(...), password: str = Form(...), otp: str = Form(...)):
         if otp == str(Rules.get_all({'email': email}, self.client, 'AUTH', 'OTPS')[-1]['otp']):
             query = {'email': email}
-            data = Rules.get(query, self.client, 'AUTH', 'USERS')
+            data = AuthUtils.convert_object_ids(Rules.get(query, self.client, 'AUTH', 'USERS'))
             if AuthUtils.verify_password(password, data['password']):
                 Rules.update(query, {'is_active': True}, self.client, 'AUTH', 'USERS')
                 access_token, refresh_token = AuthUtils.create_access_token(email), AuthUtils.create_refresh_token(email)
