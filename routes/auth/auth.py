@@ -12,7 +12,7 @@ class Auth:
         self.client = Config().GetClient()
         self.router.add_api_route('/generate_before_auth_otp', self.__generate_before_auth_otp, methods=['POST'])
         self.router.add_api_route('/signup', self.__signup, methods=['POST'])
-        self.router.add_api_route('/generate_after_auth_otp', self.__generate_after_auth_otp, methods=['PUT'])
+        self.router.add_api_route('/generate_after_auth_otp', self.__generate_after_auth_otp, methods=['POST'])
         self.router.add_api_route('/login', self.__login, methods=['GET'])
         self.router.add_api_route('/forgot-password', self.__forgot_password, methods=['PUT'])
         self.router.add_api_route('/logout', self.__logout, methods=['PUT'])
