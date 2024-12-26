@@ -13,7 +13,7 @@ class Auth:
         self.router.add_api_route('/signup', self.__signup, methods=['POST'])
         self.router.add_api_route('/generate_after_auth_otp', self.__generate_after_auth_otp, methods=['POST'])
         self.router.add_api_route('/login', self.__login, methods=['GET'])
-        self.router.add_api_route('/forgot-password', self.__forgot_password, methods=['PUT'])
+        self.router.add_api_route('/forgot-password', self.__forgot_password, methods=['POST'])
         self.router.add_api_route('/logout', self.__logout, methods=['PUT'])
         self.router.add_api_route('/delete-account', self.__delete_account, methods=['DELETE'])
         self.router.add_api_route('/me', self.__me, methods=['GET'])
