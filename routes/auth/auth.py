@@ -25,8 +25,6 @@ class Auth:
                 return {'status_code': 404, 'data': {}, 'message': 'User already exists, try logging in'}
             else:
                 self.__otp = str(AuthUtils.send_otp(email))
-                # data = {'_id': ObjectId(), 'email': email, 'otp': self.__otp, 'date_sent': datetime.now()}
-                # Rules.add(data, self.client, 'AUTH', 'OTPS')
                 return {'status_code': 200, 'message': 'Otp sent to your Email Id'}
         except Exception as e:
             return {'status_code': 404, 'message': str(e)}
@@ -34,6 +32,7 @@ class Auth:
     
     async def __signup(self, first_name: str = Form(...), last_name: str = Form(...), email: str = Form(...), password: str = Form(...), use_type: str = Form(...), otp: str = Form(...)):
         if otp == self.__otp:
+            self.__otp = None
             data = {'_id': ObjectId(), 'first_name': first_name, 'last_name': last_name, 'email': email, 'password': AuthUtils.get_hashed_password(password), 'use_type': use_type, 'is_active': True, 'date_joined': datetime.now()}
             operation_id = Rules.add(data, self.client, 'AUTH', 'USERS')
             access_token, refresh_token = AuthUtils.create_access_token(email), AuthUtils.create_refresh_token(email)
@@ -45,14 +44,13 @@ class Auth:
         user = Rules.get({'email': email}, self.client, 'AUTH', 'USERS')
         if user:
             self.__otp = str(AuthUtils.send_otp(email))
-            # data = {'_id': ObjectId(), 'email': email, 'otp': self.__otp, 'date_sent': datetime.now()}
-            # Rules.add(data, self.client, 'AUTH', 'OTPS')
             return {'status_code': 200, 'message': 'Otp sent to your Email Id'}
         else:
             return {'status_code': 404, 'message': 'User does not exist, try signing up'}
 
     async def __login(self, email: str = Form(...), password: str = Form(...), otp: str = Form(...)):
         if otp == self.__otp:
+            self.__otp = None
             query = {'email': email}
             data = AuthUtils.convert_object_ids(Rules.get(query, self.client, 'AUTH', 'USERS'))
             if AuthUtils.verify_password(password, data['password']):
@@ -66,6 +64,7 @@ class Auth:
     
     async def __forgot_password(self, email: str = Form(...), otp: str = Form(...), new_password: str = Form(...)):
         if otp == self.__otp:
+            self.__otp = None
             Rules.update({'email': email}, {'password': new_password}, self.client, 'AUTH', 'USERS')
             return {'status_code': 200, 'message': 'Password Updated Successfully'}
         else:
