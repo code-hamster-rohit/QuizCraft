@@ -16,6 +16,9 @@ class TokenData(BaseModel):
     email: str = None
 
 class AuthUtils(BaseModel):
+    @staticmethod
+    def convert_object_ids(data):
+        data['_id'] = str(data['_id'])
     
     @staticmethod
     def send_otp(email: str) -> str:
