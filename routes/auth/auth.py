@@ -7,7 +7,6 @@ from datetime import datetime
 
 class Auth:
     def __init__(self):
-        self.__otp = None
         self.router = APIRouter()
         self.client = Config().GetClient()
         self.router.add_api_route('/generate_before_auth_otp', self.__generate_before_auth_otp, methods=['POST'])
@@ -35,12 +34,9 @@ class Auth:
         if otp == self.__otp:
             self.__otp = None
             data = {'_id': ObjectId(), 'first_name': first_name, 'last_name': last_name, 'email': email, 'password': AuthUtils.get_hashed_password(password), 'use_type': use_type, 'is_active': True, 'date_joined': datetime.now()}
-            if AuthUtils.verify_user(email):
-                operation_id = Rules.add(data, self.client, 'AUTH', 'USERS')
-                access_token, refresh_token = AuthUtils.create_access_token(email), AuthUtils.create_refresh_token(email)
-                return {'status_code': 200, 'operation_id': operation_id, 'access_token': access_token, 'refresh_token': refresh_token, 'message': 'Signup Successful'}
-            else:
-                return {'status_code': 404, 'operation_id': '', 'message': 'Invalid Email Id'}
+            operation_id = Rules.add(data, self.client, 'AUTH', 'USERS')
+            access_token, refresh_token = AuthUtils.create_access_token(email), AuthUtils.create_refresh_token(email)
+            return {'status_code': 200, 'operation_id': operation_id, 'access_token': access_token, 'refresh_token': refresh_token, 'message': 'Signup Successful'}
         else:
             return {'status_code': 404, 'operation_id': '', 'message': 'Invalid OTP'}
     
